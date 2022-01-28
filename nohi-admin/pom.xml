@@ -49,6 +49,11 @@
             <artifactId>nohi-framework</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.nohi</groupId>
+            <artifactId>nohi-pay</artifactId>
+        </dependency>
+
         <!-- 定时任务-->
         <dependency>
             <groupId>com.nohi</groupId>

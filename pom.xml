@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.nohi</groupId>
     <artifactId>nohi</artifactId>
@@ -22,7 +22,7 @@
         <bitwalker.version>1.21</bitwalker.version>
         <swagger.version>3.0.0</swagger.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <mybatis-spring-boot.version>2.2.0</mybatis-spring-boot.version>
+        <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
         <pagehelper.boot.version>1.4.0</pagehelper.boot.version>
         <fastjson.version>1.2.79</fastjson.version>
         <oshi.version>5.8.6</oshi.version>
@@ -62,11 +62,16 @@
                 <version>${bitwalker.version}</version>
             </dependency>
 
-            <!-- SpringBoot集成mybatis框架 -->
+            <!-- SpringBoot集成mybatis-plus框架 -->
             <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis-spring-boot.version}</version>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
 
             <!-- pagehelper 分页插件 -->
@@ -185,10 +190,17 @@
                 <version>${nohi.version}</version>
             </dependency>
 
-            <!-- 系统模块-->
+            <!-- 系统模块 -->
             <dependency>
                 <groupId>com.nohi</groupId>
                 <artifactId>nohi-system</artifactId>
+                <version>${nohi.version}</version>
+            </dependency>
+
+            <!-- 支付模块 -->
+            <dependency>
+                <groupId>com.nohi</groupId>
+                <artifactId>nohi-pay</artifactId>
                 <version>${nohi.version}</version>
             </dependency>
 
@@ -209,6 +221,7 @@
         <module>nohi-quartz</module>
         <module>nohi-generator</module>
         <module>nohi-common</module>
+        <module>nohi-pay</module>
     </modules>
     <packaging>pom</packaging>
 
