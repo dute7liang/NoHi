@@ -1,6 +1,7 @@
 package pay;
 
 import com.alibaba.fastjson.JSON;
+import constant.PayBusinessType;
 import constant.PayTerminalEnum;
 import constant.PayTypeEnum;
 import kit.OrderIdKit;
@@ -16,13 +17,13 @@ public abstract class AbstractPayService implements PayService {
 
     WxPayNoHiService wxPayNoHiService;
 
-    abstract String getPayEnum();
+    abstract PayBusinessType getPayEnum();
 
     @Override
     public String pay(PayModel payModel) {
         String orderType = OrderIdKit.getOrderType(payModel.getTradeNo());
         // 检查业务类型对不对
-        if(orderType == null || !orderType.equals(getPayEnum())){
+        if(orderType == null || !orderType.equals(getPayEnum().getBusinessType())){
             throw new RuntimeException();
         }
         String result;
