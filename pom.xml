@@ -222,6 +222,7 @@
         <module>nohi-generator</module>
         <module>nohi-common</module>
         <module>nohi-pay</module>
+        <module>nohi-third</module>
     </modules>
     <packaging>pom</packaging>
 

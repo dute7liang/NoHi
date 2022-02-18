@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>nohi</artifactId>
+        <groupId>com.nohi</groupId>
+        <version>3.8.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>nohi-third</artifactId>
+
+    <description>
+        第三方服务的集合：
+            阿里云短信、
+            螺丝帽短信、
+            腾讯云验证码、
+            阿里云电话提醒
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.nohi</groupId>
+            <artifactId>nohi-framework</artifactId>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+</project>
