@@ -1,32 +1,37 @@
 package com.nohi.framework.aspectj;
 
-import java.util.Collection;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.HandlerMapping;
 import com.alibaba.fastjson.JSON;
 import com.nohi.common.annotation.Log;
 import com.nohi.common.core.domain.model.LoginUser;
 import com.nohi.common.enums.BusinessStatus;
 import com.nohi.common.enums.HttpMethod;
+import com.nohi.common.utils.SecurityUtils;
 import com.nohi.common.utils.ServletUtils;
 import com.nohi.common.utils.StringUtils;
 import com.nohi.common.utils.ip.IpUtils;
-import com.nohi.common.utils.SecurityUtils;
+import com.nohi.common.utils.spring.SpringUtils;
 import com.nohi.framework.manager.AsyncManager;
 import com.nohi.framework.manager.factory.AsyncFactory;
+import com.nohi.framework.util.MarketUtils;
+import com.nohi.framework.web.service.AsyncService;
 import com.nohi.system.domain.SysOperLog;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 操作日志记录处理
@@ -35,8 +40,8 @@ import com.nohi.system.domain.SysOperLog;
  */
 @Aspect
 @Component
+@Slf4j
 public class LogAspect {
-    private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
 
     /**
      * 处理完请求后执行
@@ -61,35 +66,58 @@ public class LogAspect {
 
     protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Exception e, Object jsonResult) {
         try {
-
+            long startTime = System.currentTimeMillis();
+            StringBuilder logString = new StringBuilder();
+            logString.append("record logs:");
+            // 获得注解
+            if (controllerLog == null || (!controllerLog.isPrint() && !controllerLog.isSaveDb())) {
+                return;
+            }
             // 获取当前的用户
+            HttpServletRequest request = ServletUtils.getRequest();
             LoginUser loginUser = SecurityUtils.getLoginUser();
-
             // *========数据库日志=========*//
             SysOperLog operLog = new SysOperLog();
             operLog.setStatus(BusinessStatus.SUCCESS.ordinal());
             // 请求的地址
-            String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
+            String ip = IpUtils.getIpAddr(request);
             operLog.setOperIp(ip);
-            operLog.setOperUrl(ServletUtils.getRequest().getRequestURI());
+            operLog.setOperUrl(request.getRequestURI());
+            // 设置请求方式
+            operLog.setRequestMethod(request.getMethod());
+            logString.append(String.format("ip=%s;",ip));
+            logString.append(String.format("platform=%s;version=%s;", MarketUtils.getMarket(request), MarketUtils.getVersion(request)));
+            logString.append(String.format("agent=%s;",MarketUtils.getAgent(request)));
             if (loginUser != null) {
+                logString.append(String.format("userName=%s;",loginUser.getUsername()));
                 operLog.setOperName(loginUser.getUsername());
             }
-
+            logString.append(String.format("url=%s;method=%s;title=%s;",operLog.getOperUrl(),operLog.getRequestMethod(),controllerLog.title()));
             if (e != null) {
                 operLog.setStatus(BusinessStatus.FAIL.ordinal());
                 operLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
+                logString.append(String.format("exception=%s;",e.getMessage()));
             }
+            logString.append(String.format("result=%s;",operLog.getJsonResult()));
             // 设置方法名称
             String className = joinPoint.getTarget().getClass().getName();
             String methodName = joinPoint.getSignature().getName();
             operLog.setMethod(className + "." + methodName + "()");
-            // 设置请求方式
-            operLog.setRequestMethod(ServletUtils.getRequest().getMethod());
             // 处理设置注解上的参数
-            getControllerMethodDescription(joinPoint, controllerLog, operLog, jsonResult);
-            // 保存数据库
-            AsyncManager.me().execute(AsyncFactory.recordOper(operLog));
+            getControllerMethodDescription(joinPoint, controllerLog, operLog, jsonResult,logString);
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            logString.append("StartTime:").append(dateFormat.format(new Date(startTime)));
+            long endTime = System.currentTimeMillis();
+            logString.append(";EndTime:").append(dateFormat.format(new Date(endTime)));
+            logString.append(";CostTime:").append(endTime - startTime).append("ms");
+            AsyncService bean = SpringUtils.getBean(AsyncService.class);
+            if(controllerLog.isPrint()){
+                bean.recordLog(logString);
+            }
+            if(controllerLog.isSaveDb()){
+                AsyncManager.me().execute(AsyncFactory.recordOper(operLog));
+            }
         } catch (Exception exp) {
             // 记录本地异常日志
             log.error("==前置通知异常==");
@@ -105,7 +133,8 @@ public class LogAspect {
      * @param operLog 操作日志
      * @throws Exception
      */
-    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, SysOperLog operLog, Object jsonResult) throws Exception {
+    public void getControllerMethodDescription(JoinPoint joinPoint, Log log, SysOperLog operLog, Object jsonResult,
+                                               StringBuilder logString) throws Exception {
         // 设置action动作
         operLog.setBusinessType(log.businessType().ordinal());
         // 设置标题
@@ -115,11 +144,14 @@ public class LogAspect {
         // 是否需要保存request，参数和值
         if (log.isSaveRequestData()) {
             // 获取参数的信息，传入到数据库中。
-            setRequestValue(joinPoint, operLog);
+            setRequestValue(joinPoint, operLog,logString);
         }
         // 是否需要保存response，参数和值
         if (log.isSaveResponseData() && StringUtils.isNotNull(jsonResult)) {
-            operLog.setJsonResult(StringUtils.substring(JSON.toJSONString(jsonResult), 0, 2000));
+            String jsonResultString = JSON.toJSONString(jsonResult);
+            operLog.setJsonResult(StringUtils.substring(jsonResultString, 0, 2000));
+            logString.append(String.format("result=%s;",jsonResultString));
+
         }
     }
 
@@ -129,15 +161,32 @@ public class LogAspect {
      * @param operLog 操作日志
      * @throws Exception 异常
      */
-    private void setRequestValue(JoinPoint joinPoint, SysOperLog operLog) throws Exception {
+    private void setRequestValue(JoinPoint joinPoint, SysOperLog operLog,StringBuilder logString) throws Exception {
         String requestMethod = operLog.getRequestMethod();
         if (HttpMethod.PUT.name().equals(requestMethod) || HttpMethod.POST.name().equals(requestMethod)) {
             String params = argsArrayToString(joinPoint.getArgs());
             operLog.setOperParam(StringUtils.substring(params, 0, 2000));
+            logString.append(String.format("params=%s;",params));
         } else {
-            Map<?, ?> paramsMap = (Map<?, ?>) ServletUtils.getRequest().getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-            operLog.setOperParam(StringUtils.substring(paramsMap.toString(), 0, 2000));
+            Map<String, String[]> paramsMap = ServletUtils.getRequest().getParameterMap();
+            String params = toMapString(paramsMap);
+            operLog.setOperParam(StringUtils.substring(params, 0, 2000));
+            logString.append(String.format("params=%s;",params));
         }
+    }
+
+    private String toMapString(Map<String, String[]> paramsMap){
+        StringBuilder paramString = new StringBuilder();
+        paramString.append("{");
+        for(Map.Entry<String, String[]> paramEntry : paramsMap.entrySet()) {
+            paramString.append(paramEntry.getKey()).append(":");
+            if (Objects.nonNull(paramEntry.getValue())) {
+                paramString.append(org.apache.commons.lang3.StringUtils.join(paramEntry.getValue(),","));
+            }
+            paramString.append(";");
+        }
+        paramString.append("}");
+        return paramString.toString();
     }
 
     /**

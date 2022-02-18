@@ -33,6 +33,14 @@ public @interface Log {
      */
     OperatorType operatorType() default OperatorType.MANAGE;
 
+
+    boolean isSaveDb() default true;
+
+    /**
+     * 是否打印数据
+     */
+    boolean isPrint() default true;
+
     /**
      * 是否保存请求的参数
      */

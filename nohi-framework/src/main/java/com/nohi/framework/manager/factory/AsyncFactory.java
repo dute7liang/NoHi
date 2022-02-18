@@ -2,6 +2,7 @@ package com.nohi.framework.manager.factory;
 
 import java.util.TimerTask;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.nohi.common.constant.Constants;
@@ -16,14 +17,16 @@ import com.nohi.system.domain.SysOperLog;
 import com.nohi.system.service.ISysLogininforService;
 import com.nohi.system.service.ISysOperLogService;
 import eu.bitwalker.useragentutils.UserAgent;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * 异步工厂（产生任务用）
  *
  * @author nohi
  */
+@Slf4j(topic = "sys-user")
 public class AsyncFactory {
-    private static final Logger sys_user_logger = LoggerFactory.getLogger("sys-user");
+
 
     /**
      * 记录登录信息
@@ -48,8 +51,6 @@ public class AsyncFactory {
                 s.append(LogUtils.getBlock(username));
                 s.append(LogUtils.getBlock(status));
                 s.append(LogUtils.getBlock(message));
-                // 打印信息到日志
-                sys_user_logger.info(s.toString(), args);
                 // 获取客户端操作系统
                 String os = userAgent.getOperatingSystem().getName();
                 // 获取客户端浏览器
