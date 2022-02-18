@@ -1,5 +1,5 @@
-application-liang.yml
-cert/*
+application-prod.yml
+cert/
 ######################################################################
 # Build Tools
 

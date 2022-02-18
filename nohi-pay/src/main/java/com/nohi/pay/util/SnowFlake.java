@@ -1,4 +1,4 @@
-package util;
+package com.nohi.pay.util;
 
 /**
  * 描述: Twitter的分布式自增ID雪花算法snowflake (Java版)

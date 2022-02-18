@@ -1,4 +1,4 @@
-package pay;
+package com.nohi.pay.pay;
 
 public interface PayEnum {
 

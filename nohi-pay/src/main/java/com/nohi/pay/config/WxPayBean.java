@@ -1,4 +1,4 @@
-package config;
+package com.nohi.pay.config;
 
 import lombok.Getter;
 import lombok.Setter;

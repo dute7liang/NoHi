@@ -1,4 +1,4 @@
-package config;
+package com.nohi.pay.config;
 
 import com.egzosn.pay.ali.api.AliPayConfigStorage;
 import com.egzosn.pay.ali.api.AliPayService;
@@ -24,6 +24,9 @@ public class PayConfig {
 	@Autowired
 	private WxPayBean wxPayBean;
 
+	private static final String ALI_NOTIFY_URL = "/app/notify/ali";
+	private static final String WX_NOTIFY_URL = "/app/notify/wx";
+
 	@Bean
 	public AliPayService aliPayService(){
 		AliPayConfigStorage aliPayConfigStorage = new AliPayConfigStorage();
@@ -32,7 +35,7 @@ public class PayConfig {
 		//设置为证书方式
 		aliPayConfigStorage.setCertSign(true);
 		//设置证书存储方式，这里为路径
-		aliPayConfigStorage.setCertStoreType(CertStoreType.PATH);
+		aliPayConfigStorage.setCertStoreType(CertStoreType.CLASS_PATH);
 		aliPayConfigStorage.setMerchantCert(aliPayBean.getAppCertPath());
 		aliPayConfigStorage.setAliPayRootCert(aliPayBean.getAliPayRootCertPath());
 		aliPayConfigStorage.setAliPayCert(aliPayBean.getAliPayCertPath());
@@ -71,6 +74,7 @@ public class PayConfig {
 		HttpConfigStorage httpConfigStorage = new HttpConfigStorage();
 		httpConfigStorage.setKeystore(wxPayBean.getCertPath());
 		httpConfigStorage.setStorePassword(wxPayBean.getMchId());
+		httpConfigStorage.setCertStoreType(CertStoreType.CLASS_PATH);
 		return new WxPayService(wxPayConfigStorage, httpConfigStorage);
 	}
 

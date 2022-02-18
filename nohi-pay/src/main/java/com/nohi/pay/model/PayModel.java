@@ -1,14 +1,11 @@
-package model;
+package com.nohi.pay.model;
 
-import constant.PayBusinessType;
-import constant.PayTerminalEnum;
-import constant.PayTypeEnum;
-import lombok.Builder;
+import com.nohi.pay.constant.PayTerminalEnum;
+import com.nohi.pay.constant.PayTypeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor

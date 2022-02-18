@@ -1,4 +1,4 @@
-package constant;
+package com.nohi.pay.constant;
 
 public interface PayBusinessType {
 
