@@ -33,10 +33,10 @@ public class SysOperlogController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('monitor:operlog:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysOperLog operLog) {
+    public R<TableDataInfo> list(SysOperLog operLog) {
         startPage();
         List<SysOperLog> list = operLogService.selectOperLogList(operLog);
-        return getDataTable(list);
+        return R.ok(getDataTable(list));
     }
 
     @Log(title = "操作日志", businessType = BusinessType.EXPORT)

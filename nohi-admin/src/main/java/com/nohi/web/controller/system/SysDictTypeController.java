@@ -30,10 +30,10 @@ public class SysDictTypeController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysDictType dictType) {
+    public R<TableDataInfo> list(SysDictType dictType) {
         startPage();
         List<SysDictType> list = dictTypeService.selectDictTypeList(dictType);
-        return getDataTable(list);
+        return R.ok(getDataTable(list));
     }
 
     @Log(title = "字典类型", businessType = BusinessType.EXPORT)

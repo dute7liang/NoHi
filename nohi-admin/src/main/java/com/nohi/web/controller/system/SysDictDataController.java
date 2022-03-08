@@ -35,10 +35,10 @@ public class SysDictDataController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysDictData dictData) {
+    public R<TableDataInfo> list(SysDictData dictData) {
         startPage();
         List<SysDictData> list = dictDataService.selectDictDataList(dictData);
-        return getDataTable(list);
+        return R.ok(getDataTable(list));
     }
 
     @Log(title = "字典数据", businessType = BusinessType.EXPORT)

@@ -56,10 +56,10 @@ public class SysUserController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:user:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysUser user) {
+    public R<TableDataInfo> list(SysUser user) {
         startPage();
         List<SysUser> list = userService.selectUserList(user);
-        return getDataTable(list);
+        return R.ok(getDataTable(list));
     }
 
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)

@@ -40,10 +40,10 @@ public class SysConfigController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysConfig config) {
+    public R<TableDataInfo> list(SysConfig config) {
         startPage();
         List<SysConfig> list = configService.selectConfigList(config);
-        return getDataTable(list);
+        return R.ok(getDataTable(list));
     }
 
     @Log(title = "参数管理", businessType = BusinessType.EXPORT)
