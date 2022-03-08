@@ -3,6 +3,7 @@ package com.nohi.web.controller.common;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.nohi.common.core.domain.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.nohi.common.config.NoHiConfig;
 import com.nohi.common.constant.Constants;
-import com.nohi.common.core.domain.AjaxResult;
 import com.nohi.common.utils.StringUtils;
 import com.nohi.common.utils.file.FileUploadUtils;
 import com.nohi.common.utils.file.FileUtils;
 import com.nohi.framework.config.ServerConfig;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 通用请求处理
@@ -61,19 +64,19 @@ public class CommonController {
      * 通用上传请求
      */
     @PostMapping("/common/upload")
-    public AjaxResult uploadFile(MultipartFile file) throws Exception {
+    public R<Map<String,String>> uploadFile(MultipartFile file) throws Exception {
         try {
             // 上传文件路径
             String filePath = NoHiConfig.getUploadPath();
             // 上传并返回新文件名称
             String fileName = FileUploadUtils.upload(filePath, file);
             String url = serverConfig.getUrl() + fileName;
-            AjaxResult ajax = AjaxResult.success();
-            ajax.put("fileName", fileName);
-            ajax.put("url", url);
-            return ajax;
+            Map<String,String> data = new HashMap<>();
+            data.put("fileName", fileName);
+            data.put("url", url);
+            return R.ok(data);
         } catch (Exception e) {
-            return AjaxResult.error(e.getMessage());
+            return R.failed(e.getMessage());
         }
     }
 

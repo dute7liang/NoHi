@@ -1,29 +1,9 @@
 package com.nohi.common.utils.poi;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletResponse;
-
 import com.nohi.common.annotation.Excel;
 import com.nohi.common.annotation.Excels;
-import com.nohi.common.core.domain.AjaxResult;
+import com.nohi.common.config.NoHiConfig;
+import com.nohi.common.core.domain.R;
 import com.nohi.common.core.text.Convert;
 import com.nohi.common.exception.UtilException;
 import com.nohi.common.utils.DateUtils;
@@ -33,48 +13,26 @@ import com.nohi.common.utils.file.FileTypeUtils;
 import com.nohi.common.utils.file.FileUtils;
 import com.nohi.common.utils.file.ImageUtils;
 import com.nohi.common.utils.reflect.ReflectUtils;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPicture;
-import org.apache.poi.hssf.usermodel.HSSFPictureData;
-import org.apache.poi.hssf.usermodel.HSSFShape;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationConstraint;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.PictureData;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFDataValidation;
-import org.apache.poi.xssf.usermodel.XSSFDrawing;
-import org.apache.poi.xssf.usermodel.XSSFPicture;
-import org.apache.poi.xssf.usermodel.XSSFShape;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.nohi.common.config.NoHiConfig;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Excel相关处理
@@ -345,7 +303,7 @@ public class ExcelUtil<T> {
      * @param sheetName 工作表的名称
      * @return 结果
      */
-    public AjaxResult exportExcel(List<T> list, String sheetName) {
+    public R exportExcel(List<T> list, String sheetName) {
         return exportExcel(list, sheetName, StringUtils.EMPTY);
     }
 
@@ -357,7 +315,7 @@ public class ExcelUtil<T> {
      * @param title     标题
      * @return 结果
      */
-    public AjaxResult exportExcel(List<T> list, String sheetName, String title) {
+    public R exportExcel(List<T> list, String sheetName, String title) {
         this.init(list, sheetName, title, Excel.Type.EXPORT);
         return exportExcel();
     }
@@ -398,7 +356,7 @@ public class ExcelUtil<T> {
      * @param sheetName 工作表的名称
      * @return 结果
      */
-    public AjaxResult importTemplateExcel(String sheetName) {
+    public R importTemplateExcel(String sheetName) {
         return importTemplateExcel(sheetName, StringUtils.EMPTY);
     }
 
@@ -409,7 +367,7 @@ public class ExcelUtil<T> {
      * @param title     标题
      * @return 结果
      */
-    public AjaxResult importTemplateExcel(String sheetName, String title) {
+    public R importTemplateExcel(String sheetName, String title) {
         this.init(null, sheetName, title, Excel.Type.IMPORT);
         return exportExcel();
     }
@@ -459,14 +417,14 @@ public class ExcelUtil<T> {
      *
      * @return 结果
      */
-    public AjaxResult exportExcel() {
+    public R exportExcel() {
         OutputStream out = null;
         try {
             writeSheet();
             String filename = encodingFilename(sheetName);
             out = new FileOutputStream(getAbsoluteFile(filename));
             wb.write(out);
-            return AjaxResult.success(filename);
+            return R.ok(filename);
         } catch (Exception e) {
             log.error("导出Excel异常{}", e.getMessage());
             throw new UtilException("导出Excel失败，请联系网站管理员！");

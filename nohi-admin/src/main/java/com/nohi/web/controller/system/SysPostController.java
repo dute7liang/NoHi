@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nohi.common.annotation.Log;
 import com.nohi.common.constant.UserConstants;
 import com.nohi.common.core.controller.BaseController;
-import com.nohi.common.core.domain.AjaxResult;
+import com.nohi.common.core.domain.R;
 import com.nohi.common.core.page.TableDataInfo;
 import com.nohi.common.enums.BusinessType;
 import com.nohi.common.utils.poi.ExcelUtil;
@@ -60,8 +60,8 @@ public class SysPostController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:post:query')")
     @GetMapping(value = "/{postId}")
-    public AjaxResult getInfo(@PathVariable Long postId) {
-        return AjaxResult.success(postService.selectPostById(postId));
+    public R<SysPost>getInfo(@PathVariable Long postId) {
+        return R.ok(postService.selectPostById(postId));
     }
 
     /**
@@ -70,11 +70,11 @@ public class SysPostController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:post:add')")
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysPost post) {
+    public R add(@Validated @RequestBody SysPost post) {
         if (UserConstants.NOT_UNIQUE.equals(postService.checkPostNameUnique(post))) {
-            return AjaxResult.error("新增岗位'" + post.getPostName() + "'失败，岗位名称已存在");
+            return R.failed("新增岗位'" + post.getPostName() + "'失败，岗位名称已存在");
         } else if (UserConstants.NOT_UNIQUE.equals(postService.checkPostCodeUnique(post))) {
-            return AjaxResult.error("新增岗位'" + post.getPostName() + "'失败，岗位编码已存在");
+            return R.failed("新增岗位'" + post.getPostName() + "'失败，岗位编码已存在");
         }
         post.setCreateBy(getUsername());
         return toAjax(postService.insertPost(post));
@@ -86,11 +86,11 @@ public class SysPostController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:post:edit')")
     @Log(title = "岗位管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody SysPost post) {
+    public R edit(@Validated @RequestBody SysPost post) {
         if (UserConstants.NOT_UNIQUE.equals(postService.checkPostNameUnique(post))) {
-            return AjaxResult.error("修改岗位'" + post.getPostName() + "'失败，岗位名称已存在");
+            return R.failed("修改岗位'" + post.getPostName() + "'失败，岗位名称已存在");
         } else if (UserConstants.NOT_UNIQUE.equals(postService.checkPostCodeUnique(post))) {
-            return AjaxResult.error("修改岗位'" + post.getPostName() + "'失败，岗位编码已存在");
+            return R.failed("修改岗位'" + post.getPostName() + "'失败，岗位编码已存在");
         }
         post.setUpdateBy(getUsername());
         return toAjax(postService.updatePost(post));
@@ -102,7 +102,7 @@ public class SysPostController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:post:remove')")
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{postIds}")
-    public AjaxResult remove(@PathVariable Long[] postIds) {
+    public R remove(@PathVariable Long[] postIds) {
         return toAjax(postService.deletePostByIds(postIds));
     }
 
@@ -110,8 +110,8 @@ public class SysPostController extends BaseController {
      * 获取岗位选择框列表
      */
     @GetMapping("/optionselect")
-    public AjaxResult optionselect() {
+    public R<List<SysPost>> optionselect() {
         List<SysPost> posts = postService.selectPostAll();
-        return AjaxResult.success(posts);
+        return R.failed(posts);
     }
 }

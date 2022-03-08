@@ -3,6 +3,7 @@ package com.nohi.web.controller.monitor;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.nohi.common.core.domain.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.nohi.common.annotation.Log;
 import com.nohi.common.core.controller.BaseController;
-import com.nohi.common.core.domain.AjaxResult;
 import com.nohi.common.core.page.TableDataInfo;
 import com.nohi.common.enums.BusinessType;
 import com.nohi.common.utils.poi.ExcelUtil;
@@ -51,15 +51,15 @@ public class SysOperlogController extends BaseController {
     @Log(title = "操作日志", businessType = BusinessType.DELETE)
     @PreAuthorize("@ss.hasPermi('monitor:operlog:remove')")
     @DeleteMapping("/{operIds}")
-    public AjaxResult remove(@PathVariable Long[] operIds) {
+    public R remove(@PathVariable Long[] operIds) {
         return toAjax(operLogService.deleteOperLogByIds(operIds));
     }
 
     @Log(title = "操作日志", businessType = BusinessType.CLEAN)
     @PreAuthorize("@ss.hasPermi('monitor:operlog:remove')")
     @DeleteMapping("/clean")
-    public AjaxResult clean() {
+    public R<Void> clean() {
         operLogService.cleanOperLog();
-        return AjaxResult.success();
+        return R.ok();
     }
 }

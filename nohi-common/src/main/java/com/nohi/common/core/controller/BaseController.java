@@ -1,17 +1,9 @@
 package com.nohi.common.core.controller;
 
-import java.beans.PropertyEditorSupport;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nohi.common.constant.HttpStatus;
-import com.nohi.common.core.domain.AjaxResult;
+import com.nohi.common.core.domain.R;
 import com.nohi.common.core.domain.model.LoginUser;
 import com.nohi.common.core.page.PageDomain;
 import com.nohi.common.core.page.TableDataInfo;
@@ -21,14 +13,21 @@ import com.nohi.common.utils.PageUtils;
 import com.nohi.common.utils.SecurityUtils;
 import com.nohi.common.utils.StringUtils;
 import com.nohi.common.utils.sql.SqlUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+
+import java.beans.PropertyEditorSupport;
+import java.util.Date;
+import java.util.List;
 
 /**
  * web层通用数据处理
  *
  * @author nohi
  */
+@Slf4j
 public class BaseController {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 将前台传递过来的日期格式的字符串，自动转化为Date类型
@@ -75,33 +74,6 @@ public class BaseController {
         return rspData;
     }
 
-    /**
-     * 返回成功
-     */
-    public AjaxResult success() {
-        return AjaxResult.success();
-    }
-
-    /**
-     * 返回失败消息
-     */
-    public AjaxResult error() {
-        return AjaxResult.error();
-    }
-
-    /**
-     * 返回成功消息
-     */
-    public AjaxResult success(String message) {
-        return AjaxResult.success(message);
-    }
-
-    /**
-     * 返回失败消息
-     */
-    public AjaxResult error(String message) {
-        return AjaxResult.error(message);
-    }
 
     /**
      * 响应返回结果
@@ -109,8 +81,8 @@ public class BaseController {
      * @param rows 影响行数
      * @return 操作结果
      */
-    protected AjaxResult toAjax(int rows) {
-        return rows > 0 ? AjaxResult.success() : AjaxResult.error();
+    protected R toAjax(int rows) {
+        return rows > 0 ? R.ok() : R.failed();
     }
 
     /**
@@ -119,8 +91,8 @@ public class BaseController {
      * @param result 结果
      * @return 操作结果
      */
-    protected AjaxResult toAjax(boolean result) {
-        return result ? success() : error();
+    protected R toAjax(boolean result) {
+        return result ? R.ok() : R.failed();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.nohi.web.controller.monitor;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.nohi.common.core.domain.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.nohi.common.annotation.Log;
 import com.nohi.common.core.controller.BaseController;
-import com.nohi.common.core.domain.AjaxResult;
 import com.nohi.common.core.page.TableDataInfo;
 import com.nohi.common.enums.BusinessType;
 import com.nohi.common.utils.poi.ExcelUtil;
@@ -51,15 +51,15 @@ public class SysLogininforController extends BaseController {
     @PreAuthorize("@ss.hasPermi('monitor:logininfor:remove')")
     @Log(title = "登录日志", businessType = BusinessType.DELETE)
     @DeleteMapping("/{infoIds}")
-    public AjaxResult remove(@PathVariable Long[] infoIds) {
+    public R remove(@PathVariable Long[] infoIds) {
         return toAjax(logininforService.deleteLogininforByIds(infoIds));
     }
 
     @PreAuthorize("@ss.hasPermi('monitor:logininfor:remove')")
     @Log(title = "登录日志", businessType = BusinessType.CLEAN)
     @DeleteMapping("/clean")
-    public AjaxResult clean() {
+    public R<Void> clean() {
         logininforService.cleanLogininfor();
-        return AjaxResult.success();
+        return R.ok();
     }
 }

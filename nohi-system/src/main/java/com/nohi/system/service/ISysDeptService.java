@@ -1,6 +1,7 @@
 package com.nohi.system.service;
 
 import java.util.List;
+
 import com.nohi.common.core.domain.TreeSelect;
 import com.nohi.common.core.domain.entity.SysDept;
 
@@ -9,8 +10,7 @@ import com.nohi.common.core.domain.entity.SysDept;
  *
  * @author nohi
  */
-public interface ISysDeptService
-{
+public interface ISysDeptService {
     /**
      * 查询部门管理数据
      *

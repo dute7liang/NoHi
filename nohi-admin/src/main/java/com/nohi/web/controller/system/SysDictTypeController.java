@@ -1,28 +1,21 @@
 package com.nohi.web.controller.system;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.nohi.common.annotation.Log;
 import com.nohi.common.constant.UserConstants;
 import com.nohi.common.core.controller.BaseController;
-import com.nohi.common.core.domain.AjaxResult;
+import com.nohi.common.core.domain.R;
 import com.nohi.common.core.domain.entity.SysDictType;
 import com.nohi.common.core.page.TableDataInfo;
 import com.nohi.common.enums.BusinessType;
 import com.nohi.common.utils.poi.ExcelUtil;
 import com.nohi.system.service.ISysDictTypeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 数据字典信息
@@ -57,8 +50,8 @@ public class SysDictTypeController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:dict:query')")
     @GetMapping(value = "/{dictId}")
-    public AjaxResult getInfo(@PathVariable Long dictId) {
-        return AjaxResult.success(dictTypeService.selectDictTypeById(dictId));
+    public R<SysDictType> getInfo(@PathVariable Long dictId) {
+        return R.ok(dictTypeService.selectDictTypeById(dictId));
     }
 
     /**
@@ -67,9 +60,9 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:add')")
     @Log(title = "字典类型", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysDictType dict) {
+    public R add(@Validated @RequestBody SysDictType dict) {
         if (UserConstants.NOT_UNIQUE.equals(dictTypeService.checkDictTypeUnique(dict))) {
-            return AjaxResult.error("新增字典'" + dict.getDictName() + "'失败，字典类型已存在");
+            return R.failed("新增字典'" + dict.getDictName() + "'失败，字典类型已存在");
         }
         dict.setCreateBy(getUsername());
         return toAjax(dictTypeService.insertDictType(dict));
@@ -81,9 +74,9 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:edit')")
     @Log(title = "字典类型", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody SysDictType dict) {
+    public R edit(@Validated @RequestBody SysDictType dict) {
         if (UserConstants.NOT_UNIQUE.equals(dictTypeService.checkDictTypeUnique(dict))) {
-            return AjaxResult.error("修改字典'" + dict.getDictName() + "'失败，字典类型已存在");
+            return R.failed("修改字典'" + dict.getDictName() + "'失败，字典类型已存在");
         }
         dict.setUpdateBy(getUsername());
         return toAjax(dictTypeService.updateDictType(dict));
@@ -95,9 +88,9 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictIds}")
-    public AjaxResult remove(@PathVariable Long[] dictIds) {
+    public R<Void> remove(@PathVariable Long[] dictIds) {
         dictTypeService.deleteDictTypeByIds(dictIds);
-        return success();
+        return R.ok();
     }
 
     /**
@@ -106,17 +99,17 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.CLEAN)
     @DeleteMapping("/refreshCache")
-    public AjaxResult refreshCache() {
+    public R<Void> refreshCache() {
         dictTypeService.resetDictCache();
-        return AjaxResult.success();
+        return R.ok();
     }
 
     /**
      * 获取字典选择框列表
      */
     @GetMapping("/optionselect")
-    public AjaxResult optionselect() {
+    public R<List<SysDictType>> optionselect() {
         List<SysDictType> dictTypes = dictTypeService.selectDictTypeAll();
-        return AjaxResult.success(dictTypes);
+        return R.ok(dictTypes);
     }
 }

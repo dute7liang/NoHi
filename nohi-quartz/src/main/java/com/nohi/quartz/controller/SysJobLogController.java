@@ -1,24 +1,19 @@
 package com.nohi.quartz.controller;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.nohi.common.annotation.Log;
 import com.nohi.common.core.controller.BaseController;
-import com.nohi.common.core.domain.AjaxResult;
+import com.nohi.common.core.domain.R;
 import com.nohi.common.core.page.TableDataInfo;
 import com.nohi.common.enums.BusinessType;
 import com.nohi.common.utils.poi.ExcelUtil;
 import com.nohi.quartz.domain.SysJobLog;
 import com.nohi.quartz.service.ISysJobLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 调度日志操作处理
@@ -59,8 +54,8 @@ public class SysJobLogController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('monitor:job:query')")
     @GetMapping(value = "/{configId}")
-    public AjaxResult getInfo(@PathVariable Long jobLogId) {
-        return AjaxResult.success(jobLogService.selectJobLogById(jobLogId));
+    public R<SysJobLog> getInfo(@PathVariable Long jobLogId) {
+        return R.ok(jobLogService.selectJobLogById(jobLogId));
     }
 
 
@@ -70,7 +65,7 @@ public class SysJobLogController extends BaseController {
     @PreAuthorize("@ss.hasPermi('monitor:job:remove')")
     @Log(title = "定时任务调度日志", businessType = BusinessType.DELETE)
     @DeleteMapping("/{jobLogIds}")
-    public AjaxResult remove(@PathVariable Long[] jobLogIds) {
+    public R remove(@PathVariable Long[] jobLogIds) {
         return toAjax(jobLogService.deleteJobLogByIds(jobLogIds));
     }
 
@@ -80,8 +75,8 @@ public class SysJobLogController extends BaseController {
     @PreAuthorize("@ss.hasPermi('monitor:job:remove')")
     @Log(title = "调度日志", businessType = BusinessType.CLEAN)
     @DeleteMapping("/clean")
-    public AjaxResult clean() {
+    public R clean() {
         jobLogService.cleanJobLog();
-        return AjaxResult.success();
+        return R.ok();
     }
 }

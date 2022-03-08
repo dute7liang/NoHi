@@ -2,19 +2,21 @@ package com.nohi.web.controller.common;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import com.nohi.common.config.NoHiConfig;
+import com.nohi.common.core.domain.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.google.code.kaptcha.Producer;
 import com.nohi.common.constant.Constants;
-import com.nohi.common.core.domain.AjaxResult;
 import com.nohi.common.core.redis.RedisCache;
 import com.nohi.common.utils.sign.Base64;
 import com.nohi.common.utils.uuid.IdUtils;
@@ -43,12 +45,12 @@ public class CaptchaController {
      * 生成验证码
      */
     @GetMapping("/captchaImage")
-    public AjaxResult getCode(HttpServletResponse response) throws IOException {
-        AjaxResult ajax = AjaxResult.success();
+    public R<Map<String,Object>> getCode(HttpServletResponse response) throws IOException {
+        Map<String,Object> data = new HashMap<>();
         boolean captchaOnOff = configService.selectCaptchaOnOff();
-        ajax.put("captchaOnOff", captchaOnOff);
+        data.put("captchaOnOff", captchaOnOff);
         if (!captchaOnOff) {
-            return ajax;
+            return R.ok(data);
         }
 
         // 保存验证码信息
@@ -76,11 +78,11 @@ public class CaptchaController {
         try {
             ImageIO.write(image, "jpg", os);
         } catch (IOException e) {
-            return AjaxResult.error(e.getMessage());
+            return R.failed(e.getMessage());
         }
 
-        ajax.put("uuid", uuid);
-        ajax.put("img", Base64.encode(os.toByteArray()));
-        return ajax;
+        data.put("uuid", uuid);
+        data.put("img", Base64.encode(os.toByteArray()));
+        return R.ok(data);
     }
 }

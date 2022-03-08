@@ -1,15 +1,18 @@
 package com.nohi.web.controller.system;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.nohi.common.core.domain.R;
+import com.nohi.system.domain.vo.RouterVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.nohi.common.constant.Constants;
-import com.nohi.common.core.domain.AjaxResult;
 import com.nohi.common.core.domain.entity.SysMenu;
 import com.nohi.common.core.domain.entity.SysUser;
 import com.nohi.common.core.domain.model.LoginBody;
@@ -41,13 +44,13 @@ public class SysLoginController {
      * @return 结果
      */
     @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody) {
-        AjaxResult ajax = AjaxResult.success();
+    public R<Map<String,Object>> login(@RequestBody LoginBody loginBody) {
+        Map<String,Object> data = new HashMap<>();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
-        ajax.put(Constants.TOKEN, token);
-        return ajax;
+        data.put(Constants.TOKEN, token);
+        return R.ok(data);
     }
 
     /**
@@ -56,17 +59,17 @@ public class SysLoginController {
      * @return 用户信息
      */
     @GetMapping("getInfo")
-    public AjaxResult getInfo() {
+    public R<Map<String,Object>> getInfo() {
         SysUser user = SecurityUtils.getLoginUser().getUser();
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("user", user);
-        ajax.put("roles", roles);
-        ajax.put("permissions", permissions);
-        return ajax;
+        Map<String,Object> data = new HashMap<>();
+        data.put("user", user);
+        data.put("roles", roles);
+        data.put("permissions", permissions);
+        return R.ok(data);
     }
 
     /**
@@ -75,9 +78,9 @@ public class SysLoginController {
      * @return 路由信息
      */
     @GetMapping("getRouters")
-    public AjaxResult getRouters() {
+    public R<List<RouterVo>> getRouters() {
         Long userId = SecurityUtils.getUserId();
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
-        return AjaxResult.success(menuService.buildMenus(menus));
+        return R.ok(menuService.buildMenus(menus));
     }
 }

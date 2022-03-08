@@ -1,20 +1,17 @@
 package com.nohi.web.controller.monitor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import com.nohi.common.core.domain.R;
+import com.nohi.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.nohi.common.core.domain.AjaxResult;
-import com.nohi.common.utils.StringUtils;
+
+import java.util.*;
 
 /**
  * 缓存监控
@@ -29,10 +26,10 @@ public class CacheController {
 
     @PreAuthorize("@ss.hasPermi('monitor:cache:list')")
     @GetMapping()
-    public AjaxResult getInfo() throws Exception {
-        Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
+    public R getInfo() throws Exception {
+        Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) RedisServerCommands::info);
         Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
-        Object dbSize = redisTemplate.execute((RedisCallback<Object>) connection -> connection.dbSize());
+        Object dbSize = redisTemplate.execute((RedisCallback<Object>) RedisServerCommands::dbSize);
 
         Map<String, Object> result = new HashMap<>(3);
         result.put("info", info);
@@ -47,6 +44,6 @@ public class CacheController {
             pieList.add(data);
         });
         result.put("commandStats", pieList);
-        return AjaxResult.success(result);
+        return R.ok(result);
     }
 }
