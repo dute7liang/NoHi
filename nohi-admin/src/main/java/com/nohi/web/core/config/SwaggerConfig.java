@@ -34,7 +34,7 @@ public class SwaggerConfig {
      * 系统基础配置
      */
     @Autowired
-    private NoHiConfig ruoyiConfig;
+    private NoHiConfig noHiConfig;
 
     /**
      * 是否开启swagger
@@ -63,7 +63,7 @@ public class SwaggerConfig {
                 // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 // 扫描指定包中的swagger注解
-                // .apis(RequestHandlerSelectors.basePackage("com.ruoyi.project.tool.swagger"))
+                // .apis(RequestHandlerSelectors.basePackage("com.nohi.project.tool.swagger"))
                 // 扫描所有 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
@@ -118,9 +118,9 @@ public class SwaggerConfig {
                 // 描述
                 .description("描述：用于管理集团旗下公司的人员信息,具体包括XXX,XXX模块...")
                 // 作者信息
-                .contact(new Contact(ruoyiConfig.getName(), null, null))
+                .contact(new Contact(noHiConfig.getName(), null, null))
                 // 版本
-                .version("版本号:" + ruoyiConfig.getVersion())
+                .version("版本号:" + noHiConfig.getVersion())
                 .build();
     }
 }
