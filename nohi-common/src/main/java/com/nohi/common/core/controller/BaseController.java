@@ -18,6 +18,10 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
 import java.beans.PropertyEditorSupport;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +43,24 @@ public class BaseController {
             @Override
             public void setAsText(String text) {
                 setValue(DateUtils.parseDate(text));
+            }
+        });
+        binder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalDate.parse(text, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            }
+        });
+        binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalDateTime.parse(text, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            }
+        });
+        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalTime.parse(text, DateTimeFormatter.ofPattern("HH:mm:ss")));
             }
         });
     }
@@ -64,7 +86,6 @@ public class BaseController {
     /**
      * 响应请求分页数据
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     protected TableDataInfo getDataTable(List<?> list) {
         TableDataInfo rspData = new TableDataInfo();
         rspData.setRows(list);
@@ -79,7 +100,7 @@ public class BaseController {
      * @param rows 影响行数
      * @return 操作结果
      */
-    protected R toAjax(int rows) {
+    protected R<Void> toAjax(int rows) {
         return rows > 0 ? R.ok() : R.failed();
     }
 
@@ -89,7 +110,7 @@ public class BaseController {
      * @param result 结果
      * @return 操作结果
      */
-    protected R toAjax(boolean result) {
+    protected R<Void> toAjax(boolean result) {
         return result ? R.ok() : R.failed();
     }
 

@@ -135,6 +135,7 @@ public class VelocityUtils {
         templates.add("vm/js/api.js.vm");
         if (GenConstants.TPL_CRUD.equals(tplCategory)) {
             templates.add("vm/vue/index.vue.vm");
+            templates.add("vm/vue/add-or-update-form.vue.vm");
         } else if (GenConstants.TPL_TREE.equals(tplCategory)) {
             templates.add("vm/vue/index-tree.vue.vm");
         } else if (GenConstants.TPL_SUB.equals(tplCategory)) {
@@ -186,6 +187,8 @@ public class VelocityUtils {
             fileName = StringUtils.format("{}/views/{}/{}/index.vue", vuePath, moduleName, businessName);
         } else if (template.contains("index-tree.vue.vm")) {
             fileName = StringUtils.format("{}/views/{}/{}/index.vue", vuePath, moduleName, businessName);
+        } else if (template.contains("add-or-update-form.vue.vm")) {
+            fileName = StringUtils.format("{}/views/{}/{}/add-or-update-form.vue", vuePath, moduleName, businessName);
         }
         return fileName;
     }

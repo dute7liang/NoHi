@@ -1,7 +1,11 @@
 package ${packageName}.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.nohi.common.core.domain.R;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.nohi.common.annotation.Log;
 import com.nohi.common.core.controller.BaseController;
-import com.nohi.common.core.domain.AjaxResult;
 import com.nohi.common.enums.BusinessType;
 import ${packageName}.domain.${ClassName};
 import ${packageName}.service.I${ClassName}Service;
@@ -32,8 +35,7 @@ import com.nohi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/${moduleName}/${businessName}")
-public class ${ClassName}Controller extends BaseController
-{
+public class ${ClassName}Controller extends BaseController {
     @Autowired
     private I${ClassName}Service ${className}Service;
 
@@ -43,16 +45,14 @@ public class ${ClassName}Controller extends BaseController
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:list')")
     @GetMapping("/list")
 #if($table.crud || $table.sub)
-    public TableDataInfo list(${ClassName} ${className})
-    {
+    public R<TableDataInfo> list(${ClassName} ${className}) {
         startPage();
-        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
-        return getDataTable(list);
+        List<${ClassName}> list = ${className}Service.list(Wrappers.lambdaQuery(${className}));
+        return R.ok(getDataTable(list));
     }
 #elseif($table.tree)
-    public AjaxResult list(${ClassName} ${className})
-    {
-        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+    public AjaxResult list(${ClassName} ${className}) {
+        List<${ClassName}> list = ${className}Service.list(Wrappers.lambdaQuery(${className}));
         return AjaxResult.success(list);
     }
 #end
@@ -63,9 +63,8 @@ public class ${ClassName}Controller extends BaseController
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:export')")
     @Log(title = "${functionName}", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, ${ClassName} ${className})
-    {
-        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+    public void export(HttpServletResponse response, ${ClassName} ${className}) {
+        List<${ClassName}> list = ${className}Service.list(Wrappers.lambdaQuery(${className}));
         ExcelUtil<${ClassName}> util = new ExcelUtil<${ClassName}>(${ClassName}.class);
         util.exportExcel(response, list, "${functionName}数据");
     }
@@ -75,9 +74,8 @@ public class ${ClassName}Controller extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:query')")
     @GetMapping(value = "/{${pkColumn.javaField}}")
-    public AjaxResult getInfo(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField})
-    {
-        return AjaxResult.success(${className}Service.select${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaField}));
+    public R<${ClassName}> getInfo(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        return R.ok(${className}Service.getById(${pkColumn.javaField}));
     }
 
     /**
@@ -86,9 +84,8 @@ public class ${ClassName}Controller extends BaseController
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:add')")
     @Log(title = "${functionName}", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ${ClassName} ${className})
-    {
-        return toAjax(${className}Service.insert${ClassName}(${className}));
+    public R<Void> add(@RequestBody ${ClassName} ${className}) {
+        return toAjax(${className}Service.save(${className}));
     }
 
     /**
@@ -97,9 +94,8 @@ public class ${ClassName}Controller extends BaseController
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:edit')")
     @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody ${ClassName} ${className})
-    {
-        return toAjax(${className}Service.update${ClassName}(${className}));
+    public R<Void> edit(@RequestBody ${ClassName} ${className}) {
+        return toAjax(${className}Service.updateById(${className}));
     }
 
     /**
@@ -108,8 +104,7 @@ public class ${ClassName}Controller extends BaseController
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:remove')")
     @Log(title = "${functionName}", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{${pkColumn.javaField}s}")
-    public AjaxResult remove(@PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s)
-    {
-        return toAjax(${className}Service.delete${ClassName}By${pkColumn.capJavaField}s(${pkColumn.javaField}s));
+    public R<Void> remove(@PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+        return toAjax(${className}Service.removeByIds(Arrays.asList(${pkColumn.javaField}s)));
     }
 }

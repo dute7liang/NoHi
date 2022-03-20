@@ -36,17 +36,8 @@ public class SwaggerConfig {
     @Autowired
     private NoHiConfig noHiConfig;
 
-    /**
-     * 是否开启swagger
-     */
-    @Value("${swagger.enabled}")
-    private boolean enabled;
-
-    /**
-     * 设置请求的统一前缀
-     */
-    @Value("${swagger.pathMapping}")
-    private String pathMapping;
+    @Autowired
+    private SwaggerBean swaggerBean;
 
     /**
      * 创建API
@@ -55,7 +46,7 @@ public class SwaggerConfig {
     public Docket createRestApi() {
         return new Docket(DocumentationType.OAS_30)
                 // 是否启用Swagger
-                .enable(enabled)
+                .enable(swaggerBean.isEnabled())
                 // 用来创建该API的基本信息，展示在文档的页面中（自定义展示的信息）
                 .apiInfo(apiInfo())
                 // 设置哪些接口暴露给Swagger展示
@@ -70,7 +61,7 @@ public class SwaggerConfig {
                 /* 设置安全模式，swagger可以设置访问token */
                 .securitySchemes(securitySchemes())
                 .securityContexts(securityContexts())
-                .pathMapping(pathMapping);
+                .pathMapping(swaggerBean.getPathMapping());
     }
 
     /**
