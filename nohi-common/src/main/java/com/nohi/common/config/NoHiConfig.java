@@ -1,5 +1,7 @@
 package com.nohi.common.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -14,21 +16,29 @@ public class NoHiConfig {
     /**
      * 项目名称
      */
+    @Getter
+    @Setter
     private String name;
 
     /**
      * 版本
      */
+    @Getter
+    @Setter
     private String version;
 
     /**
      * 版权年份
      */
+    @Getter
+    @Setter
     private String copyrightYear;
 
     /**
      * 实例演示开关
      */
+    @Getter
+    @Setter
     private boolean demoEnabled;
 
     /**
@@ -45,38 +55,6 @@ public class NoHiConfig {
      * 验证码类型
      */
     private static String captchaType;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getCopyrightYear() {
-        return copyrightYear;
-    }
-
-    public void setCopyrightYear(String copyrightYear) {
-        this.copyrightYear = copyrightYear;
-    }
-
-    public boolean isDemoEnabled() {
-        return demoEnabled;
-    }
-
-    public void setDemoEnabled(boolean demoEnabled) {
-        this.demoEnabled = demoEnabled;
-    }
 
     public static String getProfile() {
         return profile;
