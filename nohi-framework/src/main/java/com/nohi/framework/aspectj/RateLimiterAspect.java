@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -28,8 +29,8 @@ import com.nohi.common.utils.ip.IpUtils;
  */
 @Aspect
 @Component
+@Slf4j
 public class RateLimiterAspect {
-    private static final Logger log = LoggerFactory.getLogger(RateLimiterAspect.class);
 
     private RedisTemplate<Object, Object> redisTemplate;
 

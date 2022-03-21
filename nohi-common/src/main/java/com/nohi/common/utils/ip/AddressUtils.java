@@ -4,6 +4,7 @@ import com.nohi.common.config.NoHiConfig;
 import com.nohi.common.constant.Constants;
 import com.nohi.common.utils.StringUtils;
 import com.nohi.common.utils.http.HttpUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
@@ -13,8 +14,8 @@ import com.alibaba.fastjson.JSONObject;
  *
  * @author nohi
  */
+@Slf4j
 public class AddressUtils {
-    private static final Logger log = LoggerFactory.getLogger(AddressUtils.class);
 
     // IP地址查询
     public static final String IP_URL = "http://whois.pconline.com.cn/ipJson.jsp";

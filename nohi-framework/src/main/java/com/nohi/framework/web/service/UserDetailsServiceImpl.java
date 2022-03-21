@@ -1,5 +1,6 @@
 package com.nohi.framework.web.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,8 @@ import com.nohi.system.service.ISysUserService;
  * @author nohi
  */
 @Service
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
-
     @Autowired
     private ISysUserService userService;
 

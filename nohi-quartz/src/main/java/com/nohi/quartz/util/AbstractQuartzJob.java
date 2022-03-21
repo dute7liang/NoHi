@@ -2,6 +2,7 @@ package com.nohi.quartz.util;
 
 import java.util.Date;
 
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -22,9 +23,8 @@ import com.nohi.quartz.service.ISysJobLogService;
  *
  * @author nohi
  */
+@Slf4j
 public abstract class AbstractQuartzJob implements Job {
-    private static final Logger log = LoggerFactory.getLogger(AbstractQuartzJob.class);
-
     /**
      * 线程本地变量
      */

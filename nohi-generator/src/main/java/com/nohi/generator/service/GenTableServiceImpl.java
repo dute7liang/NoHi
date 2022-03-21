@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
@@ -44,9 +45,8 @@ import com.nohi.generator.util.VelocityUtils;
  * @author nohi
  */
 @Service
+@Slf4j
 public class GenTableServiceImpl implements IGenTableService {
-    private static final Logger log = LoggerFactory.getLogger(GenTableServiceImpl.class);
-
     @Autowired
     private GenTableMapper genTableMapper;
 

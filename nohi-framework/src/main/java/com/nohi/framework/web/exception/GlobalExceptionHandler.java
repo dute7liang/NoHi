@@ -3,6 +3,7 @@ package com.nohi.framework.web.exception;
 import javax.servlet.http.HttpServletRequest;
 
 import com.nohi.common.core.domain.R;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,9 +23,8 @@ import com.nohi.common.utils.StringUtils;
  * @author nohi
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     /**
      * 权限校验异常
      */

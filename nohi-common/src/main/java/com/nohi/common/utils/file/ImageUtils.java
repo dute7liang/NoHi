@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.util.Arrays;
 
 import com.nohi.common.constant.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +21,8 @@ import com.nohi.common.utils.StringUtils;
  *
  * @author nohi
  */
+@Slf4j
 public class ImageUtils {
-    private static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
 
     public static byte[] getImage(String imagePath) {
         InputStream is = getFile(imagePath);

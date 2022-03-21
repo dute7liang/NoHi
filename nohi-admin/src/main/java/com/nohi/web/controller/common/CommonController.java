@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.nohi.common.core.domain.R;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ import java.util.Map;
  * @author nohi
  */
 @RestController
+@Slf4j
 public class CommonController {
-    private static final Logger log = LoggerFactory.getLogger(CommonController.class);
 
     @Autowired
     private ServerConfig serverConfig;

@@ -13,6 +13,7 @@ import com.nohi.common.utils.file.FileTypeUtils;
 import com.nohi.common.utils.file.FileUtils;
 import com.nohi.common.utils.file.ImageUtils;
 import com.nohi.common.utils.reflect.ReflectUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.*;
@@ -39,8 +40,8 @@ import java.util.stream.Collectors;
  *
  * @author nohi
  */
+@Slf4j
 public class ExcelUtil<T> {
-    private static final Logger log = LoggerFactory.getLogger(ExcelUtil.class);
 
     public static final String[] FORMULA_STR = {"=", "-", "+", "@"};
 
