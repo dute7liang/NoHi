@@ -2,7 +2,6 @@ package com.nohi.common.core.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.nohi.common.constant.HttpStatus;
 import com.nohi.common.core.domain.R;
 import com.nohi.common.core.domain.model.LoginUser;
 import com.nohi.common.core.page.PageDomain;
@@ -86,10 +85,10 @@ public class BaseController {
     /**
      * 响应请求分页数据
      */
-    protected TableDataInfo getDataTable(List<?> list) {
-        TableDataInfo rspData = new TableDataInfo();
+    protected <T> TableDataInfo<T> getDataTable(List<T> list) {
+        TableDataInfo<T> rspData = new TableDataInfo<>();
         rspData.setRows(list);
-        rspData.setTotal(new PageInfo(list).getTotal());
+        rspData.setTotal(new PageInfo<>(list).getTotal());
         return rspData;
     }
 

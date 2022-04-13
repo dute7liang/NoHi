@@ -46,6 +46,14 @@ public class SecurityUtils {
         }
     }
 
+    public static String getUsernameNoException() {
+        try {
+            return getLoginUser().getUsername();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /**
      * 获取用户
      **/

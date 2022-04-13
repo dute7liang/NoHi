@@ -1,10 +1,15 @@
 package com.nohi.common.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 业务异常
  *
  * @author nohi
  */
+@Getter
+@Setter
 public final class ServiceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
@@ -38,27 +43,5 @@ public final class ServiceException extends RuntimeException {
     public ServiceException(String message, Integer code) {
         this.message = message;
         this.code = code;
-    }
-
-    public String getDetailMessage() {
-        return detailMessage;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public ServiceException setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public ServiceException setDetailMessage(String detailMessage) {
-        this.detailMessage = detailMessage;
-        return this;
     }
 }

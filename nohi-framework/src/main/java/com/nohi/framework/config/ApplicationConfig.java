@@ -19,4 +19,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 // 指定要扫描的Mapper类的包的路径
 @MapperScan("com.nohi.**.mapper")
 public class ApplicationConfig {
+    /**
+     * 时区配置
+     */
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
+        return jacksonObjectMapperBuilder -> jacksonObjectMapperBuilder.timeZone(TimeZone.getDefault());
+    }
 }

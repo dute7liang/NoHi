@@ -23,7 +23,7 @@ public class CreateAndUpdateMetaObjectHandler implements MetaObjectHandler {
 		}
 		if (metaObject.hasGetter("createBy")) {
 			if (metaObject.getValue("createBy") == null) {
-				this.setFieldValByName("createBy", SecurityUtils.getUsername(), metaObject);
+				this.setFieldValByName("createBy", SecurityUtils.getUsernameNoException(), metaObject);
 			}
 		}
 	}
@@ -32,7 +32,7 @@ public class CreateAndUpdateMetaObjectHandler implements MetaObjectHandler {
 	public void updateFill(MetaObject metaObject) {
 		if (metaObject.hasGetter("updateBy")) {
 			if (metaObject.getValue("updateBy") == null) {
-				this.setFieldValByName("updateBy", SecurityUtils.getUsername(), metaObject);
+				this.setFieldValByName("updateBy", SecurityUtils.getUsernameNoException(), metaObject);
 			}
 		}
 		if (metaObject.hasGetter("updateTime")) {
