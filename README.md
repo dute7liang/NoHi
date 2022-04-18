@@ -4,7 +4,9 @@
 
 - admin/admin123
 
-演示地址：http://vue.nohi.vip  
+vue2演示地址：http://vue.nohi.vip
+vue3演示地址：http://vue3.nohi.vip
+batter演示地址：http://batter.nohi.vip
 文档地址：http://doc.nohi.vip
 
 ## 简介
